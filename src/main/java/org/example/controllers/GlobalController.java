@@ -1,7 +1,11 @@
 package org.example.controllers;
 
+import org.example.models.Account;
 import org.example.models.User;
+
 import java.math.BigDecimal;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public final class GlobalController {
@@ -35,6 +39,182 @@ public final class GlobalController {
         }
     }
 
+    private static void userMenu(User user) {
+        while (true) {
+            printUserMenu();
+
+            if (scanner.hasNext()) {
+                String step = scanner.nextLine();
+                switch (step) {
+                    case "1" -> viewBalance(user);
+                    case "2" -> viewBanksID();
+                    case "3" -> openAccount(user);
+                    case "4" -> viewUserAccounts(user);
+                    case "5" -> deposit(user);
+                    case "6" -> withdraw(user);
+                    case "7" -> addBalanceUser(user);
+                    case "8" -> transferToOtherBank();
+                    case "9" -> closeAccount(user);
+                    case "0" -> {
+                        System.out.println("Exiting user menu.");
+                        startConsoleApp();
+                        return;
+                    }
+                }
+            } else {
+                System.out.println("Input complete. Exiting user menu.");
+                return;
+            }
+        }
+    }
+
+    private static void viewBanksID() {
+        bankController.viewBanksID();
+    }
+
+    private static void viewBalance(User user) {
+        userController.viewBalance(user);
+    }
+
+    private static void openAccount(User user) {
+        BigDecimal userBalance = userController.checkCash(user);
+
+        System.out.println("Select the bank number where you want to open an account:");
+        viewBanksID();
+        Integer selectedBankNumber = scanner.nextInt();
+
+        System.out.println("Your current balance: " + userBalance);
+        System.out.println("Enter the initial balance for the new account:");
+        BigDecimal initialBalance = scanner.nextBigDecimal();
+
+        if (isInvalidInitialBalance(initialBalance, userBalance)) {
+            System.out.println("The initial balance must be greater than zero and not exceed the current balance.");
+        } else {
+            createAccount(user, selectedBankNumber, initialBalance);
+            System.out.println("Account successfully opened!");
+        }
+    }
+
+    private static boolean isInvalidInitialBalance(BigDecimal initialBalance, BigDecimal userBalance) {
+        return initialBalance.compareTo(BigDecimal.ZERO) <= 0 || initialBalance.compareTo(userBalance) > 0;
+    }
+
+    private static void viewUserAccounts(User user) {
+        int id = userController.getUserId(user);
+        List<Account> userAccounts = accountController.getAccountsByUserID(id);
+        System.out.println("User " + user.getUsername() + "'s accounts:");
+        for (Account account : userAccounts) {
+            System.out.println("Account #" + account.getId());
+            System.out.println("Balance: " + account.getBalance());
+            System.out.println("--------------------------");
+        }
+    }
+
+    private static void deposit(User user) {
+        int numberOfAccount;
+        BigDecimal userBalance = userController.checkCash(user);
+        BigDecimal depositAmount;
+
+        viewUserAccounts(user);
+
+        while (true) {
+            System.out.println("Enter the account number to deposit to:");
+            try {
+                numberOfAccount = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input. Enter the account number as an integer.");
+                scanner.next();
+            }
+        }
+
+        System.out.println("Your current balance: " + userBalance);
+
+        do {
+            System.out.println("Enter a positive amount to deposit:");
+            depositAmount = scanner.nextBigDecimal();
+        } while (depositAmount.compareTo(BigDecimal.ZERO) <= 0);
+
+
+        accountController.updateBalanceUser(numberOfAccount, depositAmount);
+        System.out.println("Amount " + depositAmount + " successfully deposited to the account.");
+    }
+
+    private static void withdraw(User user) {
+        int numberOfAccount;
+        BigDecimal withdrawAmount;
+        viewUserAccounts(user);
+
+        while (true) {
+            System.out.println("Enter the account number:");
+            try {
+                numberOfAccount = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input. Enter the account number as an integer.");
+                scanner.next();
+            }
+        }
+
+        do {
+            System.out.println("Enter a positive amount to withdraw:");
+            withdrawAmount = scanner.nextBigDecimal();
+        } while (withdrawAmount.compareTo(BigDecimal.ZERO) <= 0);
+
+        accountController.updateBalanceAccount(numberOfAccount, withdrawAmount);
+        System.out.println("Amount " + withdrawAmount + " successfully withdrawn from the account.");
+    }
+
+    private static void addBalanceUser(User user) {
+        int userId = userController.getUserId(user);
+        BigDecimal addBalanceUser;
+
+        System.out.println("Current balance in the account: ");
+        userController.viewBalance(user);
+        while (true) {
+            System.out.println("Choose a positive top-up amount:");
+            addBalanceUser = scanner.nextBigDecimal();
+            if (addBalanceUser.compareTo(BigDecimal.ZERO) > 0) {
+                break;
+            }
+            System.out.println("Incorrect input. Enter a positive top-up amount.");
+        }
+        userController.addCashUser(userId, addBalanceUser);
+    }
+
+    private static void transferToOtherBank() {
+        BigDecimal transferAmount;
+        System.out.println("Enter the sender account number:");
+        String senderAccountId = scanner.next();
+
+        do {
+            System.out.println("Enter a positive transfer amount:");
+            transferAmount = scanner.nextBigDecimal();
+        } while (transferAmount.compareTo(BigDecimal.ZERO) <= 0);
+
+        System.out.println("Enter the recipient account number:");
+        String receivingAccountNumber = scanner.next();
+
+        transactionController.getTransferToOtherBank(senderAccountId, transferAmount, receivingAccountNumber);
+    }
+
+    private static void closeAccount(User user) {
+        int numberOfAccount;
+        viewUserAccounts(user);
+
+        System.out.println("Select the account you want to close:");
+        while (true) {
+            try {
+                numberOfAccount = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input. Enter the account number as an integer.");
+                scanner.next();
+            }
+        }
+        accountController.closeAccount(numberOfAccount);
+    }
+
     private static void registerUser() {
         System.out.println("=====Registration=====");
         System.out.println("Enter username:");
@@ -65,9 +245,24 @@ public final class GlobalController {
 
         if (userController.checkPassword(user, password)) {
             System.out.println("Welcome, " + user.getUsername() + "!");
+            userMenu(user);
         } else {
             System.out.println("Invalid password. Please try again.");
         }
+    }
+
+    private static void printUserMenu() {
+        System.out.println("===User Menu===");
+        System.out.println("1. View user balance");
+        System.out.println("2. View banks");
+        System.out.println("3. Open an account in a bank");
+        System.out.println("4. View bank account");
+        System.out.println("5. Deposit funds");
+        System.out.println("6. Withdraw funds from the account");
+        System.out.println("7. Add balance to user");
+        System.out.println("8. Transfer to another bank account");
+        System.out.println("9. Close bank account");
+        System.out.println("0. Exit");
     }
 
 }
