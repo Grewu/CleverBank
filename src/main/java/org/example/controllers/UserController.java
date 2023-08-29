@@ -6,6 +6,8 @@ import org.example.repository.user.UserRepositoryImpl;
 import org.example.service.user.UserService;
 import org.example.service.user.UserServiceImpl;
 
+import java.math.BigDecimal;
+
 public class UserController {
     private final UserRepository userRepository = new UserRepositoryImpl();
     private final UserService userService = new UserServiceImpl(userRepository);
@@ -45,4 +47,47 @@ public class UserController {
      *
      * @param user The user whose balance to retrieve.
      */
+    public void viewBalance(User user) {
+        userService.viewBalance(user);
+    }
+
+    /**
+     * Checks the available cash of a user.
+     *
+     * @param user The user to check the cash for.
+     * @return The available cash.
+     */
+    public BigDecimal checkCash(User user) {
+        return userService.checkCash(user);
+    }
+
+    /**
+     * Retrieves the ID of a user.
+     *
+     * @param user The user whose ID to retrieve.
+     * @return The user's ID.
+     */
+    public int getUserId(User user) {
+        return userService.getUserId(user);
+    }
+
+    /**
+     * Deletes a certain amount of cash from a user's account.
+     *
+     * @param id             The ID of the user.
+     * @param initialBalance The amount to delete.
+     */
+    public void deleteCash(Integer id, BigDecimal initialBalance) {
+        userService.deleteCash(id, initialBalance);
+    }
+
+    /**
+     * Adds a certain amount of cash to a user's account.
+     *
+     * @param userId        The ID of the user.
+     * @param addBalanceUser The amount to add.
+     */
+    public void addCashUser(Integer userId, BigDecimal addBalanceUser) {
+        userService.addCashUser(userId, addBalanceUser);
+    }
 }

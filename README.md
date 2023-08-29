@@ -1,15 +1,15 @@
-# Консольное приложение Clever-Bank
+# Clever-Bank Console Application
 
-Добро пожаловать в консольное приложение Clever-Bank! Этот проект предоставляет функциональность банковской системы, позволяя управлять счетами, выполнять транзакции и многое другое.
+Welcome to the Clever-Bank console application! This project provides the functionality of a banking system, allowing you to manage accounts, perform transactions, and more.
 
-## Основные сущности
+## Key Entities
 
-- Банк
-- Счёт
-- Пользователь
-- Транзакция
+- Bank
+- Account
+- User
+- Transaction
 
-## Технологический стек
+## Technology Stack
 
 - Java 17
 - Gradle
@@ -17,29 +17,29 @@
 - JDBC
 - Lombok
 
-## Основные функции
+## Main Features
 
-- Просмотр баланса пользователя.
-- Просмотр списка доступных банков.
-- Открытие нового банковского счета.
-- Просмотр информации о счете пользователя.
-- Пополнение баланса счета.
-- Снятие средств со счета.
-- Пополнение баланса пользователя.
-- Перевод средств между счетами, включая счета в других банках.
-- Закрытие банковского счета.
+- View user balance.
+- View the list of available banks.
+- Open a new bank account.
+- View user account information.
+- Deposit funds to an account.
+- Withdraw funds from an account.
+- Recharge user balance.
+- Transfer funds between accounts, including accounts in different banks.
+- Close a bank account.
 
-## Запуск приложения
+## Running the Application
 
-1. Установите Java 17, Gradle и PostgreSQL, если они еще не установлены.
-2. Склонируйте репозиторий: git clone https://github.com/Grewu/CleverBank
-3. Перейдите в каталог проекта: cd CleverBank
-4. Отредактируйте файл `src/main/resources/application.yml`, чтобы настроить подключение к базе данных.
-5. Выполните сборку проекта: gradle build
-6. Запустите приложение: gradle run
-   
-## Автор
+1. Install Java 17, Gradle, and PostgreSQL if not already installed.
+2. Clone the repository: git clone https://github.com/Grewu/CleverBank
+3. Navigate to the project directory: cd CleverBank
+4. Edit the `src/main/resources/application.yml` file to configure the database connection.
+5. Build the project: gradle build
+6. Run the application: gradle run
 
-Автор: Pavel 
+## Author
 
-Свяжитесь со мной: pavelgurevich97@gmail.com
+Author: Pavel
+
+Contact me: pavelgurevich97@gmail.com

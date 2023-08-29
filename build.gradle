@@ -17,6 +17,10 @@ dependencies {
     implementation 'org.mindrot:jbcrypt:0.4'
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
+
+
 }
 
 test {

@@ -31,8 +31,7 @@ public final class GlobalController {
                 case "1" -> registerUser();
                 case "2" -> loginUser();
                 case "0" -> {
-                    System.out.println("Exiting the application.");
-                    return;
+                    System.out.println("Exiting the application."); return;
                 }
                 default -> System.out.println("Incorrect input. Please try again.");
             }
@@ -57,7 +56,6 @@ public final class GlobalController {
                     case "9" -> closeAccount(user);
                     case "0" -> {
                         System.out.println("Exiting user menu.");
-                        startConsoleApp();
                         return;
                     }
                 }
@@ -94,6 +92,18 @@ public final class GlobalController {
             System.out.println("Account successfully opened!");
         }
     }
+
+    private static void createAccount(User user, Integer bankNumber, BigDecimal initialBalance) {
+        String accountNumber = Account.generateAccountNumber();
+        int userId = userController.getUserId(user);
+        String bankName = bankController.getBankById(bankNumber);
+
+        userController.deleteCash(userId, initialBalance);
+
+        Account account = new Account(initialBalance, bankNumber, bankName, userId, accountNumber);
+        accountController.creat(account);
+    }
+
 
     private static boolean isInvalidInitialBalance(BigDecimal initialBalance, BigDecimal userBalance) {
         return initialBalance.compareTo(BigDecimal.ZERO) <= 0 || initialBalance.compareTo(userBalance) > 0;

@@ -3,6 +3,8 @@ package org.example.service.user;
 import org.example.models.User;
 import org.example.repository.user.UserRepository;
 
+import java.math.BigDecimal;
+
 
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -25,6 +27,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkPassword(User user, String password) {
         return userRepository.checkPassword(user, password);
+    }
+    @Override
+    public void viewBalance(User user) {
+        userRepository.viewBalance(user);
+    }
+
+    @Override
+    public BigDecimal checkCash(User user) {
+        return userRepository.checkCash(user);
+    }
+
+    @Override
+    public int getUserId(User user) {
+        return userRepository.getUserId(user);
+    }
+
+    @Override
+    public void deleteCash(Integer id, BigDecimal initialBalance) {
+        userRepository.deleteCash(id, initialBalance);
+    }
+
+    @Override
+    public void addCashUser(Integer userId, BigDecimal addBalanceUser) {
+        userRepository.addCashUser(userId, addBalanceUser);
     }
 
 }
