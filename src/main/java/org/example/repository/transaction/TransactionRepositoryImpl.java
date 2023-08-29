@@ -13,13 +13,14 @@ import java.util.List;
 
 public class TransactionRepositoryImpl implements TransactionRepository {
     private static final Connection connection = ConnectionManager.open();
+
     @Override
     public void getTransferToOtherBank(String senderAccountId, BigDecimal transferAmount, String receivingAccountNumber) {
         try (Connection connection = ConnectionManager.open()) {
             decreaseSenderBalance(connection, senderAccountId, transferAmount);
             increaseReceiverBalance(connection, receivingAccountNumber, transferAmount);
             insertTransaction(connection, senderAccountId, receivingAccountNumber, transferAmount);
-            System.out.println("Транзакция успешно проведена");
+            System.out.println("The transaction was successfully conducted.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -53,7 +54,6 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         }
     }
 
-
     @Override
     public void save(Transaction transaction) {
         try (PreparedStatement statement = connection.prepareStatement(
@@ -64,7 +64,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             statement.setString(2, receiverAccountNumber);
             statement.setBigDecimal(3, transaction.getAmount());
 
-            statement.setString(4, "Perevod");
+            statement.setString(4, "money transfer");
             statement.setTimestamp(5, Timestamp.valueOf(transaction.getTimestamp()));
             statement.executeUpdate();
         } catch (SQLException ex) {
@@ -76,7 +76,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void deposit(Integer accountId, BigDecimal interestAmount) {
         if (accountId == null || interestAmount == null || interestAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            System.out.println("Неверные входные данные");
+            System.out.println("Invalid input data");
             return;
         }
         try (PreparedStatement statement = connection.prepareStatement("UPDATE account SET balance = balance + ? WHERE id = ?")) {
@@ -129,6 +129,5 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     public List<Transaction> getTransactions() {
         return null;
     }
-
 
 }
