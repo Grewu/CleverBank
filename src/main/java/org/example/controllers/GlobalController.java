@@ -2,6 +2,7 @@ package org.example.controllers;
 
 import org.example.models.Account;
 import org.example.models.User;
+import org.example.util.chek.CheckGenerated;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
@@ -145,9 +146,18 @@ public final class GlobalController {
             depositAmount = scanner.nextBigDecimal();
         } while (depositAmount.compareTo(BigDecimal.ZERO) <= 0);
 
+        checkGeneration("Deposit", accountController.getAccountByNumberOfAccount(numberOfAccount), depositAmount,
+                accountController.getAccountByNumberOfAccount(numberOfAccount));
 
         accountController.updateBalanceUser(numberOfAccount, depositAmount);
         System.out.println("Amount " + depositAmount + " successfully deposited to the account.");
+    }
+
+    private static void checkGeneration(String typeOfOperation, String senderAccountId, BigDecimal transferAmount,
+                                        String receivingAccountNumber) {
+        CheckGenerated.generateCheck(typeOfOperation, senderAccountId, transferAmount,
+                transactionController.getNameOfBank(senderAccountId),
+                transactionController.getNameOfBank(receivingAccountNumber), receivingAccountNumber);
     }
 
     private static void withdraw(User user) {
@@ -170,6 +180,10 @@ public final class GlobalController {
             System.out.println("Enter a positive amount to withdraw:");
             withdrawAmount = scanner.nextBigDecimal();
         } while (withdrawAmount.compareTo(BigDecimal.ZERO) <= 0);
+
+        checkGeneration("Withdrawal", accountController.getAccountByNumberOfAccount(numberOfAccount), withdrawAmount,
+                accountController.getAccountByNumberOfAccount(numberOfAccount));
+
 
         accountController.updateBalanceAccount(numberOfAccount, withdrawAmount);
         System.out.println("Amount " + withdrawAmount + " successfully withdrawn from the account.");
@@ -204,6 +218,9 @@ public final class GlobalController {
 
         System.out.println("Enter the recipient account number:");
         String receivingAccountNumber = scanner.next();
+
+        checkGeneration("Transfer", senderAccountId, transferAmount, receivingAccountNumber);
+
 
         transactionController.getTransferToOtherBank(senderAccountId, transferAmount, receivingAccountNumber);
     }
