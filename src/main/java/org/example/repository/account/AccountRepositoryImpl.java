@@ -25,7 +25,7 @@ public final class AccountRepositoryImpl implements AccountRepository {
             statement.setString(4, account.getAccountNumber());
             statement.setString(5, account.getBankName());
             statement.execute();
-            System.out.println("Аккаунт был успешно создан");
+            System.out.println("The account has been successfully created.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -39,7 +39,7 @@ public final class AccountRepositoryImpl implements AccountRepository {
             statement.setBigDecimal(1, newBalance);
             statement.setInt(2, id);
             statement.executeUpdate();
-            System.out.println("Баланс успешно обновлен ");
+            System.out.println("The balance has been successfully updated.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -71,7 +71,7 @@ public final class AccountRepositoryImpl implements AccountRepository {
         try (Connection connection = ConnectionManager.open()) {
             updateAccountBalance(connection, id, newBalance);
             updatePersonCash(connection, id, newBalance);
-            System.out.println("Баланс был обновлен");
+            System.out.println("The balance has been updated.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -111,9 +111,9 @@ public final class AccountRepositoryImpl implements AccountRepository {
                 int userId = retrieveUserId(connection, numberOfAccount);
                 updatePersonCash(connection, userId, balance);
                 deleteAccount(connection, numberOfAccount);
-                System.out.println("Аккаунт закрыт успешно");
+                System.out.println("Account closed successfully");
             } else {
-                System.out.println("Аккаунт не найден");
+                System.out.println("Account not found");
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error " + e.getMessage());

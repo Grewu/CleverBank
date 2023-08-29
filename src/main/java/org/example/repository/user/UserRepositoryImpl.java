@@ -27,7 +27,7 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(3, user.getEmail());
             statement.setBigDecimal(4, user.getCash());
             statement.execute();
-            System.out.println("Пользователь был создан");
+            System.out.println("User has been created.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     BigDecimal cash = resultSet.getBigDecimal("cash");
-                    System.out.println("Ваш баланс " + cash);
+                    System.out.println("Your balance is " + cash);
                 }
             }
         } catch (SQLException e) {
@@ -116,9 +116,9 @@ public class UserRepositoryImpl implements UserRepository {
             int rowsUpdated = statement.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("С баланса удалено: " + initialBalance);
+                System.out.println("Deducted from balance:  " + initialBalance);
             } else {
-                System.out.println("Не удалось обновить баланс.");
+                System.out.println("Failed to update balance");
             }
             ;
         } catch (SQLException e) {
@@ -136,10 +136,11 @@ public class UserRepositoryImpl implements UserRepository {
             int rowsUpdated = statement.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("Баланс был по полнен: " + addBalanceUser);
+                System.out.println("Balance was increased by: " + addBalanceUser);
             } else {
-                System.out.println("Не удалось обновить баланс.");
+                System.out.println("Failed to update balance.");
             }
+
         } catch (SQLException e) {
             throw new RuntimeException();
         }
