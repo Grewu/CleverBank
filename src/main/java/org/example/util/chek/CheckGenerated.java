@@ -1,4 +1,4 @@
-package org.example.util.check;
+package org.example.util.chek;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CheckGenerated {
-    private static int countOfCheck;
+    private static  int countOfCheck;
 
     public static void generateCheck(String operationType, String accountNumber, BigDecimal amount, String nameOfBankSender, String nameOfBankRecieving, String receivingAccountNumber) {
         String fileName = "check_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".txt";
@@ -33,9 +33,9 @@ public class CheckGenerated {
             writer.write("| Тип транзакции:                   " + operationType + "|\n");
             writer.write("| Банк получателя:                   " + nameOfBankRecieving + " |\n");
             writer.write("| Банк отправителя:                  " + nameOfBankSender + " |\n");
-            writer.write("| Счет отправителя:              " + accountNumber + "|\n");
-            writer.write("| Счет получателя:               " + receivingAccountNumber + "|\n");
-            writer.write("| Сумма :                               " + amount + " |\n");
+            writer.write("| Счет отправителя:                " + accountNumber + "|\n");
+            writer.write("| Счет получателя:                " + receivingAccountNumber + "|\n");
+            writer.write("| Сумма :                          " + amount + " |\n");
             writer.write("|------------------------------------------|");
             writer.close();
             countOfCheck++;
@@ -44,4 +44,5 @@ public class CheckGenerated {
             System.out.println("Ошибка при сохранении чека: " + e.getMessage());
         }
     }
+
 }
