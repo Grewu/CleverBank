@@ -221,7 +221,6 @@ public final class GlobalController {
 
         checkGeneration("Transfer", senderAccountId, transferAmount, receivingAccountNumber);
 
-
         transactionController.getTransferToOtherBank(senderAccountId, transferAmount, receivingAccountNumber);
     }
 
