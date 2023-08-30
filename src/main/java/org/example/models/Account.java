@@ -28,7 +28,6 @@ public final class Account {
     @Getter
     private String accountNumber;
 
-
     public Account(BigDecimal initialBalance, Integer bankNumber, String bankName, int userId, String accountNumber) {
         this.balance = initialBalance;
         this.idBank = bankNumber;
@@ -57,6 +56,5 @@ public final class Account {
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "").substring(0, 10);
     }
-
 
 }

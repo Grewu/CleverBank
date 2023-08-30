@@ -1,10 +1,8 @@
 package org.example.repository.user;
 
 import org.example.models.User;
-
 import org.example.util.ConnectionManager;
 import org.mindrot.jbcrypt.BCrypt;
-
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -12,7 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
+/**
+ * Implementation of the UserRepository interface.
+ */
 public class UserRepositoryImpl implements UserRepository {
 
     private static final Connection connection = ConnectionManager.open();
@@ -21,7 +21,8 @@ public class UserRepositoryImpl implements UserRepository {
     public void create(User user) {
         try {
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO person (username, password, email,cash) VALUES (?,?,?,?)");
+            PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO person (username, password, email,cash) VALUES (?,?,?,?)");
             statement.setString(1, user.getUsername());
             statement.setString(2, hashedPassword);
             statement.setString(3, user.getEmail());
@@ -116,13 +117,12 @@ public class UserRepositoryImpl implements UserRepository {
             int rowsUpdated = statement.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("Deducted from balance:  " + initialBalance);
+                System.out.println("Deducted from balance: " + initialBalance);
             } else {
-                System.out.println("Failed to update balance");
+                System.out.println("Failed to update balance.");
             }
-            ;
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -140,10 +140,8 @@ public class UserRepositoryImpl implements UserRepository {
             } else {
                 System.out.println("Failed to update balance.");
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
-
 }

@@ -4,18 +4,20 @@ package org.example.repository.transaction;
 import org.example.models.Account;
 import org.example.models.Transaction;
 import org.example.util.ConnectionManager;
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Implementation of the TransactionRepository interface.
+ */
 public class TransactionRepositoryImpl implements TransactionRepository {
     private static final Connection connection = ConnectionManager.open();
 
     @Override
-    public void getTransferToOtherBank(String senderAccountId, BigDecimal transferAmount, String receivingAccountNumber) {
+    public void getTransferToOtherBank(String senderAccountId, BigDecimal transferAmount,
+                                       String receivingAccountNumber) {
         try (Connection connection = ConnectionManager.open()) {
             decreaseSenderBalance(connection, senderAccountId, transferAmount);
             increaseReceiverBalance(connection, receivingAccountNumber, transferAmount);
@@ -26,7 +28,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         }
     }
 
-    private void decreaseSenderBalance(Connection connection, String senderAccountId, BigDecimal amount) throws SQLException {
+    private void decreaseSenderBalance(Connection connection, String senderAccountId, BigDecimal amount)
+            throws SQLException {
         try (PreparedStatement decreaseStatement = connection.prepareStatement(
                 "UPDATE account SET balance = balance - ? WHERE account_number = ?")) {
             decreaseStatement.setBigDecimal(1, amount);
@@ -35,7 +38,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         }
     }
 
-    private void increaseReceiverBalance(Connection connection, String receiverAccountNumber, BigDecimal amount) throws SQLException {
+    private void increaseReceiverBalance(Connection connection, String receiverAccountNumber, BigDecimal amount)
+            throws SQLException {
         try (PreparedStatement increaseStatement = connection.prepareStatement(
                 "UPDATE account SET balance = balance + ? WHERE account_number = ?")) {
             increaseStatement.setBigDecimal(1, amount);
@@ -44,7 +48,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         }
     }
 
-    private void insertTransaction(Connection connection, String senderAccountId, String receiverAccountNumber, BigDecimal amount) throws SQLException {
+    private void insertTransaction(Connection connection, String senderAccountId, String receiverAccountNumber,
+                                   BigDecimal amount) throws SQLException {
         try (PreparedStatement insertTransactionStatement = connection.prepareStatement(
                 "INSERT INTO transactions (senderaccountnumber, receiveraccountnumber, amount) VALUES (?, ?, ?)")) {
             insertTransactionStatement.setString(1, senderAccountId);
@@ -57,9 +62,12 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void save(Transaction transaction) {
         try (PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO transactions (sender_account_number, receiver_account_number, transaction_amount, transaction_type, transaction_timestamp) VALUES (?, ?, ?,?, ?)")) {
-            String senderAccountNumber = transaction.getSenderAccountNumber() != null ? transaction.getSenderAccountNumber() : "null_sender";
-            String receiverAccountNumber = transaction.getReceiverAccountNumber() != null ? transaction.getReceiverAccountNumber() : "null_receiver";
+                "INSERT INTO transactions (sender_account_number, receiver_account_number, transaction_amount," +
+                        " transaction_type, transaction_timestamp) VALUES (?, ?, ?,?, ?)")) {
+            String senderAccountNumber = transaction.getSenderAccountNumber() != null ?
+                    transaction.getSenderAccountNumber() : "null_sender";
+            String receiverAccountNumber = transaction.getReceiverAccountNumber() != null ?
+                    transaction.getReceiverAccountNumber() : "null_receiver";
             statement.setString(1, senderAccountNumber);
             statement.setString(2, receiverAccountNumber);
             statement.setBigDecimal(3, transaction.getAmount());
@@ -79,11 +87,17 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             System.out.println("Invalid input data");
             return;
         }
-        try (PreparedStatement statement = connection.prepareStatement("UPDATE account SET balance = balance + ? WHERE id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "UPDATE account SET balance = balance + ? WHERE id = ? AND closing_time IS NULL")) {
             statement.setBigDecimal(1, interestAmount);
             statement.setInt(2, accountId);
-            statement.executeUpdate();
+            int rowsUpdated = statement.executeUpdate();
 
+            if (rowsUpdated > 0) {
+                System.out.println("Balance updated successfully");
+            } else {
+                System.out.println("Balance update failed due to closing_time being set");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

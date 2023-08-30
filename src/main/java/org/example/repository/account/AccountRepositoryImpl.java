@@ -3,27 +3,32 @@ package org.example.repository.account;
 import org.example.models.Account;
 import org.example.util.ConnectionManager;
 
-
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of the AccountRepository interface.
+ */
 public final class AccountRepositoryImpl implements AccountRepository {
     private static final Connection connection = ConnectionManager.open();
+
     @Override
-    public void create(Account account) {
+    public void creat(Account account) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO account (user_id, bank_id, balance,account_number,name_user) VALUES (?,?,?,?,?)");
+                    "INSERT INTO account (user_id, bank_id, balance, account_number, name_user, opening_time) VALUES (?,?,?,?,?,?)");
             statement.setInt(1, account.getIdUser());
             statement.setInt(2, account.getIdBank());
             statement.setBigDecimal(3, account.getBalance());
             statement.setString(4, account.getAccountNumber());
             statement.setString(5, account.getBankName());
+
+            statement.setString(6, String.valueOf(LocalTime.now()));
+
             statement.execute();
             System.out.println("The account has been successfully created.");
         } catch (SQLException e) {
@@ -31,14 +36,23 @@ public final class AccountRepositoryImpl implements AccountRepository {
         }
     }
 
+
     @Override
-    public void updateBalanceUser(Integer id, BigDecimal newBalance) {
+    public void updateBalanceUser(Integer id, BigDecimal newBalance, int userId) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE account SET balance = balance +  ? WHERE user_id = ?");
+                    "UPDATE account SET balance = balance + ? WHERE user_id = ?");
+            PreparedStatement personUpdateStatement = connection.prepareStatement(
+                    "UPDATE person SET cash = cash - ? WHERE id = ?");
+
+            personUpdateStatement.setBigDecimal(1, newBalance);
+            personUpdateStatement.setInt(2, userId);
+            personUpdateStatement.executeUpdate();
+
             statement.setBigDecimal(1, newBalance);
             statement.setInt(2, id);
             statement.executeUpdate();
+
             System.out.println("The balance has been successfully updated.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -61,14 +75,14 @@ public final class AccountRepositoryImpl implements AccountRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
         return accounts;
     }
 
     @Override
     public void updateBalanceAccount(Integer id, BigDecimal newBalance) {
-        try (Connection connection = ConnectionManager.open()) {
+        try {
             updateAccountBalance(connection, id, newBalance);
             updatePersonCash(connection, id, newBalance);
             System.out.println("The balance has been updated.");
@@ -105,7 +119,7 @@ public final class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public void closeAccount(int numberOfAccount) {
-        try (Connection connection = ConnectionManager.open()) {
+        try {
             BigDecimal balance = retrieveAccountBalance(connection, numberOfAccount);
             if (balance != null) {
                 int userId = retrieveUserId(connection, numberOfAccount);
@@ -155,8 +169,9 @@ public final class AccountRepositoryImpl implements AccountRepository {
 
     private void deleteAccount(Connection connection, int accountId) throws SQLException {
         try (PreparedStatement deleteAccountStatement = connection.prepareStatement(
-                "DELETE FROM account WHERE id = ?")) {
-            deleteAccountStatement.setInt(1, accountId);
+                "UPDATE account SET closing_time = ? WHERE id = ?")) {
+            deleteAccountStatement.setString(1, String.valueOf(LocalTime.now()));
+            deleteAccountStatement.setInt(2, accountId);
             deleteAccountStatement.executeUpdate();
         }
     }
@@ -164,7 +179,7 @@ public final class AccountRepositoryImpl implements AccountRepository {
     @Override
     public String getAccountByNumberOfAccount(int numberOfAccount) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT  * FROM account WHERE id = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM account WHERE id = ?");
             statement.setInt(1, numberOfAccount);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -175,5 +190,4 @@ public final class AccountRepositoryImpl implements AccountRepository {
         }
         return null;
     }
-
 }
