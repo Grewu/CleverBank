@@ -151,7 +151,6 @@ public final class GlobalController {
         checkGeneration("Deposit", accountController.getAccountByNumberOfAccount(numberOfAccount), depositAmount,
                 accountController.getAccountByNumberOfAccount(numberOfAccount));
 
-
         accountController.updateBalanceUser(numberOfAccount, depositAmount, userId);
         System.out.println("Amount " + depositAmount + " successfully deposited to the account.");
     }
