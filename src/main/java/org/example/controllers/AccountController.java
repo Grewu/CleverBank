@@ -27,9 +27,10 @@ public final class AccountController {
      *
      * @param id         The ID of the account.
      * @param newBalance The new balance to set.
+     * @param userId    The ID of user
      */
-    public void updateBalanceUser(int id, BigDecimal newBalance) {
-        accountService.updateBalanceUser(id, newBalance);
+    public void updateBalanceUser(int id, BigDecimal newBalance, int userId) {
+        accountService.updateBalanceUser(id, newBalance,userId);
     }
 
     /**

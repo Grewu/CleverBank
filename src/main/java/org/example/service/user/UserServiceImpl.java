@@ -6,10 +6,17 @@ import org.example.util.log.Loggable;
 
 import java.math.BigDecimal;
 
-
+/**
+ * Implementation of the UserService interface.
+ */
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    /**
+     * Constructs a new instance of UserServiceImpl with the provided UserRepository.
+     *
+     * @param userRepository The repository responsible for data storage and retrieval.
+     */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -20,16 +27,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Loggable
     public User getUserByUsername(String username) {
         return userRepository.getUserByUsername(username);
     }
 
     @Override
-    @Loggable
     public boolean checkPassword(User user, String password) {
         return userRepository.checkPassword(user, password);
     }
+
     @Override
     @Loggable
     public void viewBalance(User user) {
@@ -37,27 +43,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Loggable
     public BigDecimal checkCash(User user) {
         return userRepository.checkCash(user);
     }
 
     @Override
-    @Loggable
     public int getUserId(User user) {
         return userRepository.getUserId(user);
     }
 
     @Override
-    @Loggable
     public void deleteCash(Integer id, BigDecimal initialBalance) {
         userRepository.deleteCash(id, initialBalance);
     }
 
     @Override
-    @Loggable
     public void addCashUser(Integer userId, BigDecimal addBalanceUser) {
         userRepository.addCashUser(userId, addBalanceUser);
     }
-
 }

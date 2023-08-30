@@ -5,9 +5,13 @@ import org.example.repository.user.UserRepository;
 import org.example.repository.user.UserRepositoryImpl;
 import org.example.service.user.UserService;
 import org.example.service.user.UserServiceImpl;
+import org.example.util.log.Loggable;
 
 import java.math.BigDecimal;
 
+/**
+ * Controller class for user-related operations.
+ */
 public class UserController {
     private final UserRepository userRepository = new UserRepositoryImpl();
     private final UserService userService = new UserServiceImpl(userRepository);
@@ -47,6 +51,7 @@ public class UserController {
      *
      * @param user The user whose balance to retrieve.
      */
+    @Loggable
     public void viewBalance(User user) {
         userService.viewBalance(user);
     }

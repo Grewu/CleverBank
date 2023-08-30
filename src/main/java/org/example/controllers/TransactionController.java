@@ -15,6 +15,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Controller class responsible for handling transaction-related operations.
+ */
 public final class TransactionController {
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
     private final TransactionService transactionService = new TransactionServiceImpl(transactionRepository);
@@ -22,8 +25,8 @@ public final class TransactionController {
     /**
      * Performs a transfer from one bank to another.
      *
-     * @param senderAccountNumber     The sender's accountNumber.
-     * @param transferAmount       The amount to transfer.
+     * @param senderAccountNumber   The sender's account number.
+     * @param transferAmount        The amount to transfer.
      * @param receivingAccountNumber The receiving account's number.
      */
     public void getTransferToOtherBank(String senderAccountNumber, BigDecimal transferAmount, String receivingAccountNumber) {
@@ -49,7 +52,7 @@ public final class TransactionController {
                     }
                     BigDecimal interestAmount = currentBalance.multiply(interestRate);
                     transactionService.deposit(account.getAccountId(), interestAmount);
-                    Transaction transaction = new Transaction(account.getAccountId(),"sender","reciev", interestAmount, "перевод", LocalDateTime.now());
+                    Transaction transaction = new Transaction(account.getAccountId(),"sender","receiver", interestAmount, "transfer", LocalDateTime.now());
                     transactionService.save(transaction);
                 }
             } catch (Exception e) {
@@ -68,7 +71,12 @@ public final class TransactionController {
         return transactionService.getNameOfBank(senderBankAccount);
     }
 
+    /**
+     * Retrieves a list of transactions.
+     *
+     * @return A list of transactions.
+     */
     public List<Transaction> getTransactions() {
-        return  transactionService.getTransactions();
+        return transactionService.getTransactions();
     }
 }

@@ -1,6 +1,7 @@
 package org.example.repository.account;
 
 import org.example.models.Account;
+import org.example.util.log.Loggable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,15 +16,16 @@ public interface AccountRepository {
      *
      * @param account The account to be created.
      */
-    void create(Account account);
+    void creat(Account account);
 
     /**
      * Updates the balance of a user's account.
      *
      * @param id         The ID of the account.
      * @param newBalance The new balance to set.
+     * @param userId     The ID of the user
      */
-    void updateBalanceUser(Integer id, BigDecimal newBalance);
+    void updateBalanceUser(Integer id, BigDecimal newBalance, int userId);
 
     /**
      * Retrieves a list of accounts associated with a user.

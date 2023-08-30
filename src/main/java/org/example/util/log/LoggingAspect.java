@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 @Aspect
 public class LoggingAspect {
 
-    private Logger logger;
+    private final Logger logger;
 
     public LoggingAspect() {
         FileLoggingConfigurer.configure();
