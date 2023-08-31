@@ -48,7 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactions() {
-        return transactionRepository.getTransactions();
+    public List<Transaction> getTransactions(String accountNumber) {
+        return transactionRepository.getTransactions(accountNumber);
     }
 }

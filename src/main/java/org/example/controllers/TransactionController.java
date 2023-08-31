@@ -76,7 +76,7 @@ public final class TransactionController {
      *
      * @return A list of transactions.
      */
-    public List<Transaction> getTransactions() {
-        return transactionService.getTransactions();
+    public List<Transaction> getTransactions(String accountNumber) {
+        return transactionService.getTransactions(accountNumber);
     }
 }

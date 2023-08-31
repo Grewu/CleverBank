@@ -28,8 +28,8 @@ public final class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateBalanceUser(Integer id, BigDecimal newBalance, int userId) {
-        accountRepository.updateBalanceUser(id, newBalance, userId);
+    public void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber) {
+        accountRepository.updateBalanceUser(id, newBalance, userId,accountNumber);
     }
 
     @Override
@@ -38,8 +38,8 @@ public final class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateBalanceAccount(Integer id, BigDecimal newBalance) {
-        accountRepository.updateBalanceAccount(id, newBalance);
+    public void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount) {
+        accountRepository.updateBalanceAccount(id, newBalance,numberAccount);
     }
 
     @Override
@@ -50,5 +50,10 @@ public final class AccountServiceImpl implements AccountService {
     @Override
     public String getAccountByNumberOfAccount(int numberOfAccount) {
         return accountRepository.getAccountByNumberOfAccount(numberOfAccount);
+    }
+
+    @Override
+    public String getOpeningDate(int numberOfAccount) {
+        return accountRepository.getOpeningDate(numberOfAccount);
     }
 }

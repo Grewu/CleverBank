@@ -20,7 +20,7 @@ class AccountRepositoryImplTest {
         BigDecimal balanceChange = BigDecimal.valueOf(100.0);
 
         Assertions.assertDoesNotThrow(() -> {
-            accountRepository.updateBalanceUser(userId, balanceChange,0);
+            accountRepository.updateBalanceUser(userId, balanceChange,0, null);
         }, "updateBalanceUser should not throw an exception for valid arguments");
     }
 
@@ -30,7 +30,7 @@ class AccountRepositoryImplTest {
         BigDecimal balanceChange = BigDecimal.valueOf(-50.0);
 
         Assertions.assertDoesNotThrow(() -> {
-            accountRepository.updateBalanceAccount(accountId, balanceChange);
+            accountRepository.updateBalanceAccount(accountId, balanceChange, null);
         }, "updateBalanceAccount should not throw an exception for valid arguments");
     }
 
@@ -50,7 +50,7 @@ class AccountRepositoryImplTest {
         BigDecimal balanceChange = BigDecimal.valueOf(-50.0);
 
         Assertions.assertDoesNotThrow(() -> {
-            accountRepository.updateBalanceAccount(accountId, balanceChange);
+            accountRepository.updateBalanceAccount(accountId, balanceChange, null);
         }, "updateBalanceAccount should not throw an exception for valid arguments");
     }
 

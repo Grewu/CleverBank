@@ -24,7 +24,13 @@ dependencies {
     implementation 'org.aspectj:aspectjweaver:1.9.7'
 
     testImplementation 'org.mockito:mockito-core:3.10.0'
+    implementation 'org.apache.pdfbox:pdfbox:2.0.27'
 
+    implementation 'org.apache.pdfbox:pdfbox:2.0.27'
+
+    implementation 'com.itextpdf:itext7-core:7.1.18'
+
+    implementation 'org.slf4j:slf4j-simple:1.7.32'
 }
 
 test {

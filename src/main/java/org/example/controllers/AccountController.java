@@ -25,12 +25,13 @@ public final class AccountController {
     /**
      * Updates the balance for a user's account.
      *
-     * @param id         The ID of the account.
-     * @param newBalance The new balance to set.
-     * @param userId    The ID of user
+     * @param id            The ID of the account.
+     * @param newBalance    The new balance to set.
+     * @param userId        The ID of user
+     * @param accountNumber The number of account
      */
-    public void updateBalanceUser(int id, BigDecimal newBalance, int userId) {
-        accountService.updateBalanceUser(id, newBalance,userId);
+    public void updateBalanceUser(int id, BigDecimal newBalance, int userId, String accountNumber) {
+        accountService.updateBalanceUser(id, newBalance,userId,accountNumber);
     }
 
     /**
@@ -46,11 +47,12 @@ public final class AccountController {
     /**
      * Updates the balance for an account.
      *
-     * @param id         The ID of the account.
-     * @param newBalance The new balance to set.
+     * @param id            The ID of the account.
+     * @param newBalance    The new balance to set.
+     * @param numberAccount
      */
-    public void updateBalanceAccount(int id, BigDecimal newBalance) {
-        accountService.updateBalanceAccount(id, newBalance);
+    public void updateBalanceAccount(int id, BigDecimal newBalance, String numberAccount) {
+        accountService.updateBalanceAccount(id, newBalance,numberAccount);
     }
 
     /**
@@ -70,5 +72,9 @@ public final class AccountController {
      */
     public String getAccountByNumberOfAccount(int numberOfAccount) {
         return accountService.getAccountByNumberOfAccount(numberOfAccount);
+    }
+
+    public String getOpeningDate(int numberOfAccount) {
+        return accountService.getOpeningDate(numberOfAccount);
     }
 }

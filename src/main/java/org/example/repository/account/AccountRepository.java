@@ -1,7 +1,6 @@
 package org.example.repository.account;
 
 import org.example.models.Account;
-import org.example.util.log.Loggable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,11 +20,12 @@ public interface AccountRepository {
     /**
      * Updates the balance of a user's account.
      *
-     * @param id         The ID of the account.
-     * @param newBalance The new balance to set.
-     * @param userId     The ID of the user
+     * @param id            The ID of the account.
+     * @param newBalance    The new balance to set.
+     * @param userId        The ID of the user
+     * @param accountNumber
      */
-    void updateBalanceUser(Integer id, BigDecimal newBalance, int userId);
+    void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber);
 
     /**
      * Retrieves a list of accounts associated with a user.
@@ -38,10 +38,11 @@ public interface AccountRepository {
     /**
      * Updates the balance of an account.
      *
-     * @param id         The ID of the account.
-     * @param newBalance The new balance to set.
+     * @param id            The ID of the account.
+     * @param newBalance    The new balance to set.
+     * @param numberAccount Number account user
      */
-    void updateBalanceAccount(Integer id, BigDecimal newBalance);
+    void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount);
 
     /**
      * Closes an account.
@@ -57,4 +58,6 @@ public interface AccountRepository {
      * @return Account information as a string.
      */
     String getAccountByNumberOfAccount(int numberOfAccount);
+
+    String getOpeningDate(int numberOfAccount);
 }

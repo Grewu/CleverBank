@@ -19,11 +19,12 @@ public interface AccountService {
     /**
      * Updates the balance of a user's account.
      *
-     * @param id        The ID of the account to update.
-     * @param newBalance The new balance for the account.
-     * @param userId    The ID of the associated user.
+     * @param id            The ID of the account to update.
+     * @param newBalance    The new balance for the account.
+     * @param userId        The ID of the associated user.
+     * @param accountNumber
      */
-    void updateBalanceUser(Integer id, BigDecimal newBalance, int userId);
+    void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber);
 
     /**
      * Retrieves a list of accounts associated with a user.
@@ -36,10 +37,11 @@ public interface AccountService {
     /**
      * Updates the balance of an account.
      *
-     * @param id        The ID of the account to update.
-     * @param newBalance The new balance for the account.
+     * @param id            The ID of the account to update.
+     * @param newBalance    The new balance for the account.
+     * @param numberAccount
      */
-    void updateBalanceAccount(Integer id, BigDecimal newBalance);
+    void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount);
 
     /**
      * Closes an account.
@@ -55,4 +57,7 @@ public interface AccountService {
      * @return The account information as a string.
      */
     String getAccountByNumberOfAccount(int numberOfAccount);
+
+    String getOpeningDate(int numberOfAccount);
+
 }

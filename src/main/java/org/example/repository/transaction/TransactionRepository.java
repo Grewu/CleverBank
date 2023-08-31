@@ -54,5 +54,5 @@ public interface TransactionRepository {
      *
      * @return A list of transactions.
      */
-    List<Transaction> getTransactions();
+    List<Transaction> getTransactions(String accountNumber);
 }

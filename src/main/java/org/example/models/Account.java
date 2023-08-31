@@ -15,6 +15,7 @@ import java.util.UUID;
 public final class Account {
     private String nameUser;
     private Integer userId;
+    @Getter
     private String bankName;
     private Integer id;
     @Getter
@@ -50,6 +51,14 @@ public final class Account {
         this.balance = balance;
         this.accountNumber = accountNumber;
         this.nameUser = nameUser;
+    }
+
+    public Account(int id, BigDecimal balance, int userId, int bankId, String bankName) {
+        this.id=id;
+        this.balance=balance;
+        this.userId=userId;
+        this.idBank=bankId;
+        this.bankName=bankName;
     }
 
     public static String generateAccountNumber() {

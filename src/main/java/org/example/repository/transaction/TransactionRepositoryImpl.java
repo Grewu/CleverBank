@@ -4,8 +4,12 @@ package org.example.repository.transaction;
 import org.example.models.Account;
 import org.example.models.Transaction;
 import org.example.util.ConnectionManager;
+
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +55,11 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private void insertTransaction(Connection connection, String senderAccountId, String receiverAccountNumber,
                                    BigDecimal amount) throws SQLException {
         try (PreparedStatement insertTransactionStatement = connection.prepareStatement(
-                "INSERT INTO transactions (senderaccountnumber, receiveraccountnumber, amount) VALUES (?, ?, ?)")) {
+                "INSERT INTO transactions (sender_account,receiver_account_number,transaction_amount,transaction_timestamp,transaction_type) VALUES (?, ?, ?,?,'transfer')")) {
             insertTransactionStatement.setString(1, senderAccountId);
             insertTransactionStatement.setString(2, receiverAccountNumber);
             insertTransactionStatement.setBigDecimal(3, amount);
+            insertTransactionStatement.setString(4, String.valueOf(LocalDate.now()));
             insertTransactionStatement.executeUpdate();
         }
     }
@@ -140,8 +145,22 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public List<Transaction> getTransactions() {
-        return null;
+    public List<Transaction> getTransactions(String accountNumber) {
+        List<Transaction> transactions = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM transactions WHERE sender_account_number = ? ")) {
+            statement.setString(1, accountNumber);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String date = resultSet.getString("transaction_timestamp");
+                String time = LocalTime.parse(date).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+                String type = resultSet.getString("transaction_type");
+                BigDecimal amount = resultSet.getBigDecimal("transaction_amount");
+                Transaction transaction = new Transaction(time, type, amount);
+                transactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return transactions;
     }
-
 }

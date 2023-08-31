@@ -51,7 +51,7 @@ public class UserController {
      *
      * @param user The user whose balance to retrieve.
      */
-    @Loggable
+
     public void viewBalance(User user) {
         userService.viewBalance(user);
     }
