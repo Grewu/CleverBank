@@ -55,7 +55,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private void insertTransaction(Connection connection, String senderAccountId, String receiverAccountNumber,
                                    BigDecimal amount) throws SQLException {
         try (PreparedStatement insertTransactionStatement = connection.prepareStatement(
-                "INSERT INTO transactions (sender_account,receiver_account_number,transaction_amount,transaction_timestamp,transaction_type) VALUES (?, ?, ?,?,'transfer')")) {
+                "INSERT INTO transactions (sender_account_number,receiver_account_number,transaction_amount,transaction_timestamp,transaction_type) VALUES (?, ?, ?,?,'transfer')")) {
             insertTransactionStatement.setString(1, senderAccountId);
             insertTransactionStatement.setString(2, receiverAccountNumber);
             insertTransactionStatement.setBigDecimal(3, amount);
@@ -88,21 +88,11 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public void deposit(Integer accountId, BigDecimal interestAmount) {
-        if (accountId == null || interestAmount == null || interestAmount.compareTo(BigDecimal.ZERO) <= 0) {
-            System.out.println("Invalid input data");
-            return;
-        }
         try (PreparedStatement statement = connection.prepareStatement(
                 "UPDATE account SET balance = balance + ? WHERE id = ? AND closing_time IS NULL")) {
             statement.setBigDecimal(1, interestAmount);
             statement.setInt(2, accountId);
             int rowsUpdated = statement.executeUpdate();
-
-            if (rowsUpdated > 0) {
-                System.out.println("Balance updated successfully");
-            } else {
-                System.out.println("Balance update failed due to closing_time being set");
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -152,10 +142,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 String date = resultSet.getString("transaction_timestamp");
-                String time = LocalTime.parse(date).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
                 String type = resultSet.getString("transaction_type");
                 BigDecimal amount = resultSet.getBigDecimal("transaction_amount");
-                Transaction transaction = new Transaction(time, type, amount);
+                Transaction transaction = new Transaction(date, type, amount);
                 transactions.add(transaction);
             }
         } catch (SQLException e) {

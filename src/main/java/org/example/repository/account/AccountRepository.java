@@ -22,8 +22,8 @@ public interface AccountRepository {
      *
      * @param id            The ID of the account.
      * @param newBalance    The new balance to set.
-     * @param userId        The ID of the user
-     * @param accountNumber
+     * @param userId        The ID of the user.
+     * @param accountNumber The account number.
      */
     void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber);
 
@@ -40,7 +40,7 @@ public interface AccountRepository {
      *
      * @param id            The ID of the account.
      * @param newBalance    The new balance to set.
-     * @param numberAccount Number account user
+     * @param numberAccount The account number.
      */
     void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount);
 
@@ -59,5 +59,11 @@ public interface AccountRepository {
      */
     String getAccountByNumberOfAccount(int numberOfAccount);
 
+    /**
+     * Retrieves the opening date of an account.
+     *
+     * @param numberOfAccount The number of the account.
+     * @return The opening date as a string.
+     */
     String getOpeningDate(int numberOfAccount);
 }

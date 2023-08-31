@@ -22,6 +22,8 @@ public final class TransactionController {
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
     private final TransactionService transactionService = new TransactionServiceImpl(transactionRepository);
 
+    private ScheduledExecutorService scheduler;
+
     /**
      * Performs a transfer from one bank to another.
      *
@@ -37,8 +39,8 @@ public final class TransactionController {
      * Starts the periodic calculation of interest for accounts.
      * Runs every minute to calculate interest and deposit it into eligible accounts.
      */
-    public synchronized void startInterestCalculation() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    public void startInterestCalculation() {
+       scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 BigDecimal interestRate = ConfigReader.getConfiguredInterestRate();
@@ -46,13 +48,9 @@ public final class TransactionController {
                 List<Account> accounts = transactionService.getAllAccounts();
                 for (Account account : accounts) {
                     BigDecimal currentBalance = account.getBalance();
-                    if (currentBalance.compareTo(BigDecimal.ZERO) <= 0) {
-                        System.out.println("No money in the account");
-                        continue;
-                    }
                     BigDecimal interestAmount = currentBalance.multiply(interestRate);
                     transactionService.deposit(account.getAccountId(), interestAmount);
-                    Transaction transaction = new Transaction(account.getAccountId(),"sender","receiver", interestAmount, "transfer", LocalDateTime.now());
+                    Transaction transaction = new Transaction(account.getAccountId(), "sender", "receiver", interestAmount, "transfer", LocalDateTime.now());
                     transactionService.save(transaction);
                 }
             } catch (Exception e) {
@@ -74,9 +72,14 @@ public final class TransactionController {
     /**
      * Retrieves a list of transactions.
      *
+     * @param accountNumber The account number for which transactions should be retrieved.
      * @return A list of transactions.
      */
     public List<Transaction> getTransactions(String accountNumber) {
         return transactionService.getTransactions(accountNumber);
+    }
+
+    public void stopInterestCalculation() {
+        scheduler.shutdown();
     }
 }

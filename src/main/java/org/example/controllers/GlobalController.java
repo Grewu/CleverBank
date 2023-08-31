@@ -5,7 +5,6 @@ import org.example.models.Transaction;
 import org.example.models.User;
 import org.example.util.chek.CheckGenerated;
 import org.example.util.pdf.StatementPDFGenerator;
-
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -17,6 +16,10 @@ public final class GlobalController {
     private static final AccountController accountController = new AccountController();
     private static final TransactionController transactionController = new TransactionController();
     private static final BankController bankController = new BankController();
+
+    static {
+        transactionController.startInterestCalculation();
+    }
 
     public static void startConsoleApp() {
         while (true) {
@@ -34,6 +37,7 @@ public final class GlobalController {
                 case "2" -> loginUser();
                 case "0" -> {
                     System.out.println("Exiting the application.");
+                    transactionController.stopInterestCalculation();
                     return;
                 }
                 default -> System.out.println("Incorrect input. Please try again.");
@@ -148,7 +152,7 @@ public final class GlobalController {
         do {
             System.out.println("Enter a positive amount to deposit:");
             depositAmount = scanner.nextBigDecimal();
-        } while (depositAmount.compareTo(BigDecimal.ZERO) <= 0);
+        } while (depositAmount.compareTo(BigDecimal.ZERO) < 0);
 
         int userId = userController.getUserId(user);
 
@@ -307,8 +311,9 @@ public final class GlobalController {
         String bankName = bankController.getBankById(selectedBankNumber);
 
         viewUserAccounts(user);
+
         while (true) {
-            System.out.println("Enter the account number statement");
+            System.out.println("Enter the account number for the statement:");
             try {
                 numberOfAccount = scanner.nextInt();
                 break;
@@ -322,7 +327,8 @@ public final class GlobalController {
         String openingDate = accountController.getOpeningDate(numberOfAccount);
         String balance = String.valueOf(userController.checkCash(user));
         List<Transaction> transactionList = transactionController.getTransactions(accountNumber);
-        StatementPDFGenerator.generateStatementPDF(bankName,user.getUsername(),accountNumber,openingDate,balance,transactionList);
+
+        StatementPDFGenerator.generateStatementPDF(bankName, user.getUsername(), accountNumber, openingDate, balance, transactionList);
     }
 
 }

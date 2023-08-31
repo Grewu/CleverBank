@@ -20,7 +20,8 @@ public final class AccountRepositoryImpl implements AccountRepository {
     public void creat(Account account) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO account (user_id, bank_id, balance, account_number, name_user, opening_time) VALUES (?,?,?,?,?,?)");
+                    "INSERT INTO account (user_id, bank_id, balance, account_number, name_user, opening_time)" +
+                            " VALUES (?,?,?,?,?,?)");
             statement.setInt(1, account.getIdUser());
             statement.setInt(2, account.getIdBank());
             statement.setBigDecimal(3, account.getBalance());
@@ -40,31 +41,42 @@ public final class AccountRepositoryImpl implements AccountRepository {
     @Override
     public void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber) {
         try {
-            PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE account SET balance = balance + ? WHERE user_id = ?");
-            PreparedStatement personUpdateStatement = connection.prepareStatement(
-                    "UPDATE person SET cash = cash - ? WHERE id = ?");
-            PreparedStatement transactionInsertStatement = connection.prepareStatement(
-                    "INSERT INTO transactions (sender_account_number, receiver_account_number, transaction_amount, " +
-                            "transaction_timestamp, transaction_type) VALUES (?, ?, ?, ?, 'update balance')");
-
-            personUpdateStatement.setBigDecimal(1, newBalance);
-            personUpdateStatement.setInt(2, userId);
-            personUpdateStatement.executeUpdate();
-
-            statement.setBigDecimal(1, newBalance);
-            statement.setInt(2, id);
-            statement.executeUpdate();
-
-            transactionInsertStatement.setString(1, accountNumber);
-            transactionInsertStatement.setString(2, accountNumber);
-            transactionInsertStatement.setBigDecimal(3,newBalance);
-            transactionInsertStatement.setString(4, String.valueOf(LocalDate.now()));
-            transactionInsertStatement.executeUpdate();
-
+            updatePersonCash(userId, newBalance);
+            updateAccountBalance(id, newBalance);
+            insertTransaction(accountNumber, newBalance);
             System.out.println("The balance has been successfully updated.");
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void updatePersonCash(int userId, BigDecimal newBalance) throws SQLException {
+        try (PreparedStatement personUpdateStatement = connection.prepareStatement(
+                "UPDATE person SET cash = cash - ? WHERE id = ?")) {
+            personUpdateStatement.setBigDecimal(1, newBalance);
+            personUpdateStatement.setInt(2, userId);
+            personUpdateStatement.executeUpdate();
+        }
+    }
+
+    private void updateAccountBalance(int id, BigDecimal newBalance) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "UPDATE account SET balance = balance + ? WHERE user_id = ?")) {
+            statement.setBigDecimal(1, newBalance);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+        }
+    }
+
+    private void insertTransaction(String accountNumber, BigDecimal newBalance) throws SQLException {
+        try (PreparedStatement transactionInsertStatement = connection.prepareStatement(
+                "INSERT INTO transactions (sender_account_number, receiver_account_number, transaction_amount, " +
+                        "transaction_timestamp, transaction_type) VALUES (?, ?, ?, ?, 'update balance')")) {
+            transactionInsertStatement.setString(1, accountNumber);
+            transactionInsertStatement.setString(2, accountNumber);
+            transactionInsertStatement.setBigDecimal(3, newBalance);
+            transactionInsertStatement.setString(4, String.valueOf(LocalDate.now()));
+            transactionInsertStatement.executeUpdate();
         }
     }
 
@@ -93,8 +105,8 @@ public final class AccountRepositoryImpl implements AccountRepository {
     @Override
     public void updateBalanceAccount(Integer id, BigDecimal newBalance, String accountNumber) {
         try {
-            updateAccountBalance(connection, id, newBalance);
-            updatePersonCash(connection, id, newBalance);
+            updateAccountBalance( id, newBalance);
+            updatePersonCash( id, newBalance);
             insertTransaction(connection, accountNumber, newBalance);
             System.out.println("The balance has been updated.");
         } catch (SQLException e) {
@@ -117,16 +129,17 @@ public final class AccountRepositoryImpl implements AccountRepository {
         }
     }
 
-    private void updateAccountBalance(Connection connection, Integer id, BigDecimal newBalance) throws SQLException {
+    private void updateAccountBalance(Integer id, BigDecimal newBalance) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
                 "UPDATE account SET balance = balance - ? WHERE id = ?")) {
             statement.setBigDecimal(1, newBalance);
             statement.setInt(2, id);
+            System.out.println("Yes");
             statement.executeUpdate();
         }
     }
 
-    private void updatePersonCash(Connection connection, Integer id, BigDecimal newBalance) throws SQLException {
+    private void updatePersonCash(Integer id, BigDecimal newBalance) throws SQLException {
         try (PreparedStatement getUserIdStatement = connection.prepareStatement(
                 "SELECT user_id FROM account WHERE id = ?");
              PreparedStatement updatePersonStatement = connection.prepareStatement(

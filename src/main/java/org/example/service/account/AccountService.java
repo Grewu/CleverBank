@@ -22,7 +22,7 @@ public interface AccountService {
      * @param id            The ID of the account to update.
      * @param newBalance    The new balance for the account.
      * @param userId        The ID of the associated user.
-     * @param accountNumber
+     * @param accountNumber The account number.
      */
     void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber);
 
@@ -39,7 +39,7 @@ public interface AccountService {
      *
      * @param id            The ID of the account to update.
      * @param newBalance    The new balance for the account.
-     * @param numberAccount
+     * @param numberAccount The account number.
      */
     void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount);
 
@@ -58,6 +58,11 @@ public interface AccountService {
      */
     String getAccountByNumberOfAccount(int numberOfAccount);
 
+    /**
+     * Retrieves the opening date of an account.
+     *
+     * @param numberOfAccount The number of the account.
+     * @return The opening date as a string.
+     */
     String getOpeningDate(int numberOfAccount);
-
 }

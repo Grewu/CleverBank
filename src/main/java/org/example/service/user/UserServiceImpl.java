@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Loggable
     public void viewBalance(User user) {
         userRepository.viewBalance(user);
     }

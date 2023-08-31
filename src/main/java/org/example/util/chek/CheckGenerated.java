@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class CheckGenerated {
-    private static  int countOfCheck;
+    private static   int countOfCheck;
 
-    public static void generateCheck(String operationType, String accountNumber, BigDecimal amount, String nameOfBankSender, String nameOfBankRecieving, String receivingAccountNumber) {
+    public static   void generateCheck(String operationType, String accountNumber, BigDecimal amount, String nameOfBankSender, String nameOfBankRecieving, String receivingAccountNumber) {
+        countOfCheck++;
         String fileName = "check_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".txt";
-
         try {
             File checkFolder = new File("check");
             if (!checkFolder.exists()) {
@@ -38,7 +38,6 @@ public class CheckGenerated {
             writer.write("| Сумма :                          " + amount + " |\n");
             writer.write("|------------------------------------------|");
             writer.close();
-            countOfCheck++;
             System.out.println("Чек успешно сохранен: " + checkFile.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Ошибка при сохранении чека: " + e.getMessage());

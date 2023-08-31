@@ -5,8 +5,6 @@ import org.example.repository.user.UserRepository;
 import org.example.repository.user.UserRepositoryImpl;
 import org.example.service.user.UserService;
 import org.example.service.user.UserServiceImpl;
-import org.example.util.log.Loggable;
-
 import java.math.BigDecimal;
 
 /**
