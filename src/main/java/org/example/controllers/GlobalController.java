@@ -5,6 +5,7 @@ import org.example.models.Transaction;
 import org.example.models.User;
 import org.example.util.chek.CheckGenerated;
 import org.example.util.pdf.StatementPDFGenerator;
+
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -24,12 +25,12 @@ public final class GlobalController {
     public static void startConsoleApp() {
         while (true) {
             System.out.println("==CleverBank==");
-
             System.out.println("""
-                    1 - registration\s
-                    2 - login\s
-                    0 - exit\s
+                    1 - Registration
+                    2 - Login
+                    0 - Exit
                     """);
+            System.out.println("Choose number: ");
             String step = scanner.nextLine();
 
             switch (step) {
@@ -48,7 +49,6 @@ public final class GlobalController {
     private static void userMenu(User user) {
         while (true) {
             printUserMenu();
-
             if (scanner.hasNext()) {
                 String step = scanner.nextLine();
                 switch (step) {
@@ -77,18 +77,22 @@ public final class GlobalController {
 
     private static void viewBanksID() {
         bankController.viewBanksID();
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void viewBalance(User user) {
         userController.viewBalance(user);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void openAccount(User user) {
         BigDecimal userBalance = userController.checkCash(user);
 
         System.out.println("Select the bank number where you want to open an account:");
-        viewBanksID();
-        Integer selectedBankNumber = scanner.nextInt();
+        bankController.viewBanksID();
+        Integer selectedBankNumber = nextValidInt("Enter bank number: ");
 
         System.out.println("Your current balance: " + userBalance);
         System.out.println("Enter the initial balance for the new account:");
@@ -111,6 +115,8 @@ public final class GlobalController {
 
         Account account = new Account(initialBalance, bankNumber, bankName, userId, accountNumber);
         accountController.creat(account);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
 
@@ -127,6 +133,8 @@ public final class GlobalController {
             System.out.println("Balance: " + account.getBalance());
             System.out.println("--------------------------");
         }
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void deposit(User user) {
@@ -227,6 +235,8 @@ public final class GlobalController {
         checkGeneration("Transfer", senderAccountId, transferAmount, receivingAccountNumber);
 
         transactionController.getTransferToOtherBank(senderAccountId, transferAmount, receivingAccountNumber);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void closeAccount(User user) {
@@ -244,6 +254,8 @@ public final class GlobalController {
             }
         }
         accountController.closeAccount(numberOfAccount);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void registerUser() {
@@ -273,7 +285,6 @@ public final class GlobalController {
             System.out.println("User with such username not found.");
             return;
         }
-
         if (userController.checkPassword(user, password)) {
             System.out.println("Welcome, " + user.getUsername() + "!");
             userMenu(user);
@@ -293,8 +304,9 @@ public final class GlobalController {
         System.out.println("7. Add balance to user");
         System.out.println("8. Transfer to another bank account");
         System.out.println("9. Close bank account");
-        System.out.println("10. Get a statment");
+        System.out.println("10. Get a statement");
         System.out.println("0. Exit");
+        System.out.println("Choose number: ");
     }
 
     private static void checkGeneration(String typeOfOperation, String senderAccountId, BigDecimal transferAmount,
@@ -305,23 +317,12 @@ public final class GlobalController {
     }
 
     private static void generatePdfFile(User user) {
-        int numberOfAccount;
-        viewBanksID();
-        Integer selectedBankNumber = scanner.nextInt();
+        bankController.viewBanksID();
+        Integer selectedBankNumber = nextValidInt("Enter the bank number: ");
         String bankName = bankController.getBankById(selectedBankNumber);
 
         viewUserAccounts(user);
-
-        while (true) {
-            System.out.println("Enter the account number for the statement:");
-            try {
-                numberOfAccount = scanner.nextInt();
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Incorrect input. Enter the account number as an integer.");
-                scanner.next();
-            }
-        }
+        int numberOfAccount = nextValidInt("Enter the account number for the statement: ");
 
         String accountNumber = accountController.getAccountByNumberOfAccount(numberOfAccount);
         String openingDate = accountController.getOpeningDate(numberOfAccount);
@@ -329,6 +330,20 @@ public final class GlobalController {
         List<Transaction> transactionList = transactionController.getTransactions(accountNumber);
 
         StatementPDFGenerator.generateStatementPDF(bankName, user.getUsername(), accountNumber, openingDate, balance, transactionList);
+        StatementPDFGenerator.generateStatementTXT(bankName, user.getUsername(), accountNumber, openingDate, balance, transactionList);
+
+    }
+
+    private static Integer nextValidInt(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input. Enter an integer.");
+                scanner.next();
+            }
+        }
     }
 
 }

@@ -11,7 +11,7 @@ public class PropertiesUtil {
         loadProperties();
     }
 
-    public static String get(String key){
+    public static String get(String key) {
         return PROPERTIES.getProperty(key);
     }
 

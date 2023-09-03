@@ -5,6 +5,7 @@ import org.example.repository.user.UserRepository;
 import org.example.repository.user.UserRepositoryImpl;
 import org.example.service.user.UserService;
 import org.example.service.user.UserServiceImpl;
+
 import java.math.BigDecimal;
 
 /**
@@ -87,7 +88,7 @@ public class UserController {
     /**
      * Adds a certain amount of cash to a user's account.
      *
-     * @param userId        The ID of the user.
+     * @param userId         The ID of the user.
      * @param addBalanceUser The amount to add.
      */
     public void addCashUser(Integer userId, BigDecimal addBalanceUser) {

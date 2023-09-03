@@ -55,7 +55,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private void insertTransaction(Connection connection, String senderAccountId, String receiverAccountNumber,
                                    BigDecimal amount) throws SQLException {
         try (PreparedStatement insertTransactionStatement = connection.prepareStatement(
-                "INSERT INTO transactions (sender_account_number,receiver_account_number,transaction_amount,transaction_timestamp,transaction_type) VALUES (?, ?, ?,?,'transfer')")) {
+                "INSERT INTO transactions (sender_account_number,receiver_account_number," +
+                        "transaction_amount,transaction_timestamp,transaction_type) VALUES (?, ?, ?,?,'transfer')")) {
             insertTransactionStatement.setString(1, senderAccountId);
             insertTransactionStatement.setString(2, receiverAccountNumber);
             insertTransactionStatement.setBigDecimal(3, amount);
@@ -137,7 +138,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public List<Transaction> getTransactions(String accountNumber) {
         List<Transaction> transactions = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM transactions WHERE sender_account_number = ? ")) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT * FROM transactions WHERE sender_account_number = ? ")) {
             statement.setString(1, accountNumber);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {

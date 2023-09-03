@@ -27,8 +27,8 @@ public final class TransactionController {
     /**
      * Performs a transfer from one bank to another.
      *
-     * @param senderAccountNumber   The sender's account number.
-     * @param transferAmount        The amount to transfer.
+     * @param senderAccountNumber    The sender's account number.
+     * @param transferAmount         The amount to transfer.
      * @param receivingAccountNumber The receiving account's number.
      */
     public void getTransferToOtherBank(String senderAccountNumber, BigDecimal transferAmount, String receivingAccountNumber) {
@@ -40,7 +40,7 @@ public final class TransactionController {
      * Runs every minute to calculate interest and deposit it into eligible accounts.
      */
     public void startInterestCalculation() {
-       scheduler = Executors.newScheduledThreadPool(1);
+        scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 BigDecimal interestRate = ConfigReader.getConfiguredInterestRate();

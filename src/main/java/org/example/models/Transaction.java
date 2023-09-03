@@ -33,11 +33,11 @@ public class Transaction {
     }
 
     public Transaction(int accountId, String sender, String receiver, BigDecimal interestAmount, String transfer, LocalDateTime time) {
-        this.id=accountId;
-        this.senderAccountNumber=sender;
-        this.receiverAccountNumber=receiver;
-        this.amount=interestAmount;
-        this.transactionType=transfer;
-        this.timestamp=time;
+        this.id = accountId;
+        this.senderAccountNumber = sender;
+        this.receiverAccountNumber = receiver;
+        this.amount = interestAmount;
+        this.transactionType = transfer;
+        this.timestamp = time;
     }
 }

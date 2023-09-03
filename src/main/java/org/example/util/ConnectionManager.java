@@ -13,7 +13,7 @@ public final class ConnectionManager {
         loadDriver();
     }
 
-    public static Connection open(){
+    public static Connection open() {
         try {
             return DriverManager.getConnection(
                     PropertiesUtil.get(URL_KEY),

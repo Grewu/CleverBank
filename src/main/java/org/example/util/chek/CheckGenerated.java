@@ -13,10 +13,11 @@ public class CheckGenerated {
     public static   void generateCheck(String operationType, String accountNumber, BigDecimal amount, String nameOfBankSender, String nameOfBankRecieving, String receivingAccountNumber) {
         countOfCheck++;
         String fileName = "check_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")) + ".txt";
+        String folderPath = "check" + File.separator + "txt";
         try {
-            File checkFolder = new File("check");
+            File checkFolder = new File(folderPath);
             if (!checkFolder.exists()) {
-                checkFolder.mkdir();
+                checkFolder.mkdirs();
             }
 
             File checkFile = new File(checkFolder, fileName);
@@ -38,9 +39,9 @@ public class CheckGenerated {
             writer.write("| Сумма :                          " + amount + " |\n");
             writer.write("|------------------------------------------|");
             writer.close();
-            System.out.println("Чек успешно сохранен: " + checkFile.getAbsolutePath());
+            System.out.println("Check  " + checkFile.getAbsolutePath());
         } catch (IOException e) {
-            System.out.println("Ошибка при сохранении чека: " + e.getMessage());
+            System.out.println("Error " + e.getMessage());
         }
     }
 
