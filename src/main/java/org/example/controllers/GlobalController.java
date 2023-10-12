@@ -1,8 +1,10 @@
 package org.example.controllers;
 
 import org.example.models.Account;
+import org.example.models.Transaction;
 import org.example.models.User;
 import org.example.util.chek.CheckGenerated;
+import org.example.util.pdf.StatementPDFGenerator;
 
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
@@ -16,23 +18,28 @@ public final class GlobalController {
     private static final TransactionController transactionController = new TransactionController();
     private static final BankController bankController = new BankController();
 
+    static {
+        transactionController.startInterestCalculation();
+    }
 
     public static void startConsoleApp() {
         while (true) {
             System.out.println("==CleverBank==");
-
             System.out.println("""
-                    1 - registration\s
-                    2 - login\s
-                    0 - exit\s
+                    1 - Registration
+                    2 - Login
+                    0 - Exit
                     """);
+            System.out.println("Choose number: ");
             String step = scanner.nextLine();
 
             switch (step) {
                 case "1" -> registerUser();
                 case "2" -> loginUser();
                 case "0" -> {
-                    System.out.println("Exiting the application."); return;
+                    System.out.println("Exiting the application.");
+                    transactionController.stopInterestCalculation();
+                    return;
                 }
                 default -> System.out.println("Incorrect input. Please try again.");
             }
@@ -42,7 +49,6 @@ public final class GlobalController {
     private static void userMenu(User user) {
         while (true) {
             printUserMenu();
-
             if (scanner.hasNext()) {
                 String step = scanner.nextLine();
                 switch (step) {
@@ -55,6 +61,7 @@ public final class GlobalController {
                     case "7" -> addBalanceUser(user);
                     case "8" -> transferToOtherBank();
                     case "9" -> closeAccount(user);
+                    case "10" -> generatePdfFile(user);
                     case "0" -> {
                         System.out.println("Exiting user menu.");
                         return;
@@ -67,20 +74,25 @@ public final class GlobalController {
         }
     }
 
+
     private static void viewBanksID() {
         bankController.viewBanksID();
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void viewBalance(User user) {
         userController.viewBalance(user);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void openAccount(User user) {
         BigDecimal userBalance = userController.checkCash(user);
 
         System.out.println("Select the bank number where you want to open an account:");
-        viewBanksID();
-        Integer selectedBankNumber = scanner.nextInt();
+        bankController.viewBanksID();
+        Integer selectedBankNumber = nextValidInt("Enter bank number: ");
 
         System.out.println("Your current balance: " + userBalance);
         System.out.println("Enter the initial balance for the new account:");
@@ -103,6 +115,8 @@ public final class GlobalController {
 
         Account account = new Account(initialBalance, bankNumber, bankName, userId, accountNumber);
         accountController.creat(account);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
 
@@ -119,6 +133,8 @@ public final class GlobalController {
             System.out.println("Balance: " + account.getBalance());
             System.out.println("--------------------------");
         }
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void deposit(User user) {
@@ -144,20 +160,17 @@ public final class GlobalController {
         do {
             System.out.println("Enter a positive amount to deposit:");
             depositAmount = scanner.nextBigDecimal();
-        } while (depositAmount.compareTo(BigDecimal.ZERO) <= 0);
+        } while (depositAmount.compareTo(BigDecimal.ZERO) < 0);
+
+        int userId = userController.getUserId(user);
+
+        String accountNumber = accountController.getAccountByNumberOfAccount(numberOfAccount);
 
         checkGeneration("Deposit", accountController.getAccountByNumberOfAccount(numberOfAccount), depositAmount,
-                accountController.getAccountByNumberOfAccount(numberOfAccount));
+                accountNumber);
 
-        accountController.updateBalanceUser(numberOfAccount, depositAmount);
+        accountController.updateBalanceUser(numberOfAccount, depositAmount, userId, accountNumber);
         System.out.println("Amount " + depositAmount + " successfully deposited to the account.");
-    }
-
-    private static void checkGeneration(String typeOfOperation, String senderAccountId, BigDecimal transferAmount,
-                                        String receivingAccountNumber) {
-        CheckGenerated.generateCheck(typeOfOperation, senderAccountId, transferAmount,
-                transactionController.getNameOfBank(senderAccountId),
-                transactionController.getNameOfBank(receivingAccountNumber), receivingAccountNumber);
     }
 
     private static void withdraw(User user) {
@@ -181,11 +194,12 @@ public final class GlobalController {
             withdrawAmount = scanner.nextBigDecimal();
         } while (withdrawAmount.compareTo(BigDecimal.ZERO) <= 0);
 
-        checkGeneration("Withdrawal", accountController.getAccountByNumberOfAccount(numberOfAccount), withdrawAmount,
-                accountController.getAccountByNumberOfAccount(numberOfAccount));
+        String numberAccount = accountController.getAccountByNumberOfAccount(numberOfAccount);
 
+        checkGeneration("Withdrawal", numberAccount, withdrawAmount,
+                numberAccount);
 
-        accountController.updateBalanceAccount(numberOfAccount, withdrawAmount);
+        accountController.updateBalanceAccount(numberOfAccount, withdrawAmount, numberAccount);
         System.out.println("Amount " + withdrawAmount + " successfully withdrawn from the account.");
     }
 
@@ -218,11 +232,11 @@ public final class GlobalController {
 
         System.out.println("Enter the recipient account number:");
         String receivingAccountNumber = scanner.next();
-
         checkGeneration("Transfer", senderAccountId, transferAmount, receivingAccountNumber);
 
-
         transactionController.getTransferToOtherBank(senderAccountId, transferAmount, receivingAccountNumber);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void closeAccount(User user) {
@@ -240,6 +254,8 @@ public final class GlobalController {
             }
         }
         accountController.closeAccount(numberOfAccount);
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     private static void registerUser() {
@@ -269,7 +285,6 @@ public final class GlobalController {
             System.out.println("User with such username not found.");
             return;
         }
-
         if (userController.checkPassword(user, password)) {
             System.out.println("Welcome, " + user.getUsername() + "!");
             userMenu(user);
@@ -289,7 +304,46 @@ public final class GlobalController {
         System.out.println("7. Add balance to user");
         System.out.println("8. Transfer to another bank account");
         System.out.println("9. Close bank account");
+        System.out.println("10. Get a statement");
         System.out.println("0. Exit");
+        System.out.println("Choose number: ");
+    }
+
+    private static void checkGeneration(String typeOfOperation, String senderAccountId, BigDecimal transferAmount,
+                                        String receivingAccountNumber) {
+        CheckGenerated.generateCheck(typeOfOperation, senderAccountId, transferAmount,
+                transactionController.getNameOfBank(senderAccountId),
+                transactionController.getNameOfBank(receivingAccountNumber), receivingAccountNumber);
+    }
+
+    private static void generatePdfFile(User user) {
+        bankController.viewBanksID();
+        Integer selectedBankNumber = nextValidInt("Enter the bank number: ");
+        String bankName = bankController.getBankById(selectedBankNumber);
+
+        viewUserAccounts(user);
+        int numberOfAccount = nextValidInt("Enter the account number for the statement: ");
+
+        String accountNumber = accountController.getAccountByNumberOfAccount(numberOfAccount);
+        String openingDate = accountController.getOpeningDate(numberOfAccount);
+        String balance = String.valueOf(userController.checkCash(user));
+        List<Transaction> transactionList = transactionController.getTransactions(accountNumber);
+
+        StatementPDFGenerator.generateStatementPDF(bankName, user.getUsername(), accountNumber, openingDate, balance, transactionList);
+        StatementPDFGenerator.generateStatementTXT(bankName, user.getUsername(), accountNumber, openingDate, balance, transactionList);
+
+    }
+
+    private static Integer nextValidInt(String message) {
+        while (true) {
+            try {
+                System.out.print(message);
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Incorrect input. Enter an integer.");
+                scanner.next();
+            }
+        }
     }
 
 }

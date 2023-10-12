@@ -8,6 +8,9 @@ import org.example.service.user.UserServiceImpl;
 
 import java.math.BigDecimal;
 
+/**
+ * Controller class for user-related operations.
+ */
 public class UserController {
     private final UserRepository userRepository = new UserRepositoryImpl();
     private final UserService userService = new UserServiceImpl(userRepository);
@@ -47,6 +50,7 @@ public class UserController {
      *
      * @param user The user whose balance to retrieve.
      */
+
     public void viewBalance(User user) {
         userService.viewBalance(user);
     }
@@ -84,7 +88,7 @@ public class UserController {
     /**
      * Adds a certain amount of cash to a user's account.
      *
-     * @param userId        The ID of the user.
+     * @param userId         The ID of the user.
      * @param addBalanceUser The amount to add.
      */
     public void addCashUser(Integer userId, BigDecimal addBalanceUser) {

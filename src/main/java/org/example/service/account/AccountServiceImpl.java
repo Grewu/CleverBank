@@ -6,33 +6,42 @@ import org.example.repository.account.AccountRepository;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Implementation of the AccountService interface.
+ */
 public final class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
 
-
+    /**
+     * Constructs a new instance of AccountServiceImpl with the provided AccountRepository.
+     *
+     * @param accountRepository The repository responsible for account data storage and retrieval.
+     */
     public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
 
     @Override
     public void creat(Account account) {
-        accountRepository.create(account);
+        accountRepository.creat(account);
     }
+
     @Override
-    public void updateBalanceUser(Integer id, BigDecimal newBalance) {
-        accountRepository.updateBalanceUser(id,newBalance);
+    public void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber) {
+        accountRepository.updateBalanceUser(id, newBalance, userId, accountNumber);
     }
 
     @Override
     public List<Account> getAccountsByUserID(Integer id) {
-        return  accountRepository.getAccountsByUserID(id);
+        return accountRepository.getAccountsByUserID(id);
     }
 
     @Override
-    public void updateBalanceAccount(Integer id, BigDecimal newBalance) {
-        accountRepository.updateBalanceAccount(id,newBalance);
+    public void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount) {
+        accountRepository.updateBalanceAccount(id, newBalance, numberAccount);
     }
+
     @Override
     public void closeAccount(int numberOfAccount) {
         accountRepository.closeAccount(numberOfAccount);
@@ -40,7 +49,11 @@ public final class AccountServiceImpl implements AccountService {
 
     @Override
     public String getAccountByNumberOfAccount(int numberOfAccount) {
-        return  accountRepository.getAccountByNumberOfAccount(numberOfAccount);
+        return accountRepository.getAccountByNumberOfAccount(numberOfAccount);
     }
 
+    @Override
+    public String getOpeningDate(int numberOfAccount) {
+        return accountRepository.getOpeningDate(numberOfAccount);
+    }
 }

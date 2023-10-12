@@ -7,16 +7,24 @@ import org.example.repository.transaction.TransactionRepository;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Implementation of the TransactionService interface.
+ */
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
 
+    /**
+     * Constructs a TransactionServiceImpl with the provided TransactionRepository.
+     *
+     * @param transactionRepository The TransactionRepository to be used.
+     */
     public TransactionServiceImpl(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
     @Override
     public void getTransferToOtherBank(String senderAccountId, BigDecimal transferAmount, String receivingAccountNumber) {
-        transactionRepository.getTransferToOtherBank(senderAccountId,transferAmount,receivingAccountNumber);
+        transactionRepository.getTransferToOtherBank(senderAccountId, transferAmount, receivingAccountNumber);
     }
 
     @Override
@@ -26,12 +34,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Account> getAllAccounts() {
-       return transactionRepository.getAllAccounts();
+        return transactionRepository.getAllAccounts();
     }
 
     @Override
     public void deposit(Integer accountId, BigDecimal interestAmount) {
-        transactionRepository.deposit(accountId,  interestAmount);
+        transactionRepository.deposit(accountId, interestAmount);
     }
 
     @Override
@@ -40,9 +48,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactions() {
-        return  transactionRepository.getTransactions();
+    public List<Transaction> getTransactions(String accountNumber) {
+        return transactionRepository.getTransactions(accountNumber);
     }
-
-
 }

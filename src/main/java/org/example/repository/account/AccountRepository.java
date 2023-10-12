@@ -15,15 +15,17 @@ public interface AccountRepository {
      *
      * @param account The account to be created.
      */
-    void create(Account account);
+    void creat(Account account);
 
     /**
      * Updates the balance of a user's account.
      *
-     * @param id         The ID of the account.
-     * @param newBalance The new balance to set.
+     * @param id            The ID of the account.
+     * @param newBalance    The new balance to set.
+     * @param userId        The ID of the user.
+     * @param accountNumber The account number.
      */
-    void updateBalanceUser(Integer id, BigDecimal newBalance);
+    void updateBalanceUser(Integer id, BigDecimal newBalance, int userId, String accountNumber);
 
     /**
      * Retrieves a list of accounts associated with a user.
@@ -36,10 +38,11 @@ public interface AccountRepository {
     /**
      * Updates the balance of an account.
      *
-     * @param id         The ID of the account.
-     * @param newBalance The new balance to set.
+     * @param id            The ID of the account.
+     * @param newBalance    The new balance to set.
+     * @param numberAccount The account number.
      */
-    void updateBalanceAccount(Integer id, BigDecimal newBalance);
+    void updateBalanceAccount(Integer id, BigDecimal newBalance, String numberAccount);
 
     /**
      * Closes an account.
@@ -55,4 +58,12 @@ public interface AccountRepository {
      * @return Account information as a string.
      */
     String getAccountByNumberOfAccount(int numberOfAccount);
+
+    /**
+     * Retrieves the opening date of an account.
+     *
+     * @param numberOfAccount The number of the account.
+     * @return The opening date as a string.
+     */
+    String getOpeningDate(int numberOfAccount);
 }

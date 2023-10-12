@@ -49,7 +49,11 @@ public interface TransactionRepository {
      */
     String getNameOfBank(String senderBankAccount);
 
-    List<Transaction> getTransactions();
-
-
+    /**
+     * Retrieves a list of transactions for a specific account.
+     *
+     * @param accountNumber The account number for which transactions should be retrieved.
+     * @return A list of transactions.
+     */
+    List<Transaction> getTransactions(String accountNumber);
 }

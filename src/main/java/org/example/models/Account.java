@@ -15,6 +15,7 @@ import java.util.UUID;
 public final class Account {
     private String nameUser;
     private Integer userId;
+    @Getter
     private String bankName;
     private Integer id;
     @Getter
@@ -28,7 +29,6 @@ public final class Account {
     @Getter
     private String accountNumber;
 
-
     public Account(BigDecimal initialBalance, Integer bankNumber, String bankName, int userId, String accountNumber) {
         this.balance = initialBalance;
         this.idBank = bankNumber;
@@ -37,11 +37,12 @@ public final class Account {
         this.accountNumber = accountNumber;
     }
 
-    public Account(int id, BigDecimal balance, int bankId, int userId) {
+    public Account(int id, BigDecimal balance, int userId, int bankId, String bankName) {
         this.id = id;
         this.balance = balance;
         this.idBank = bankId;
-        this.idUser = userId;
+        this.userId = userId;
+        this.bankName = bankName;
     }
 
     public Account(int accountId, int userId, int bankId, BigDecimal balance, String accountNumber, String nameUser) {
@@ -57,6 +58,4 @@ public final class Account {
         UUID uuid = UUID.randomUUID();
         return uuid.toString().replace("-", "").substring(0, 10);
     }
-
-
 }

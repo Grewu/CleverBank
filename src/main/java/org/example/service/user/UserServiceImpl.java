@@ -2,13 +2,21 @@ package org.example.service.user;
 
 import org.example.models.User;
 import org.example.repository.user.UserRepository;
+import org.example.util.log.Loggable;
 
 import java.math.BigDecimal;
 
-
+/**
+ * Implementation of the UserService interface.
+ */
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    /**
+     * Constructs a new instance of UserServiceImpl with the provided UserRepository.
+     *
+     * @param userRepository The repository responsible for data storage and retrieval.
+     */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -19,7 +27,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-
     public User getUserByUsername(String username) {
         return userRepository.getUserByUsername(username);
     }
@@ -28,6 +35,7 @@ public class UserServiceImpl implements UserService {
     public boolean checkPassword(User user, String password) {
         return userRepository.checkPassword(user, password);
     }
+
     @Override
     public void viewBalance(User user) {
         userRepository.viewBalance(user);
@@ -52,5 +60,4 @@ public class UserServiceImpl implements UserService {
     public void addCashUser(Integer userId, BigDecimal addBalanceUser) {
         userRepository.addCashUser(userId, addBalanceUser);
     }
-
 }

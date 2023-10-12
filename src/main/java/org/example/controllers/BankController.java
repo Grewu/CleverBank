@@ -8,6 +8,7 @@ import org.example.service.bank.BankServiceImpl;
 public final class BankController {
     private final BankRepository bankRepository = new BankRepositoryImpl();
     private final BankService bankService = new BankServiceImpl(bankRepository);
+
     /**
      * Displays the IDs of all banks.
      */
